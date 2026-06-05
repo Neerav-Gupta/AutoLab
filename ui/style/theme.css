@@ -1,0 +1,164 @@
+/* ── AutoLab Theme — Dark (default) ── */
+:root {
+  /* Backgrounds */
+  --bg:           #0a0a0a;
+  --bg-editor:    #0d0d0d;
+  --bg-sidebar:   #111111;
+  --bg-panel:     #0d0d0d;
+  --bg-titlebar:  #0e0e0e;
+  --bg-tabbar:    #080808;
+  --bg-tab-act:   #0d0d0d;
+  --bg-tab-in:    #0e0e0e;
+  --bg-activity:  #080808;
+  --bg-statusbar: #0e0e0e;
+  --bg-input:     #161616;
+  --bg-hover:     #181818;
+  --bg-select:    #1e3a5f;
+  --bg-dropdown:  #1a1a1a;
+
+  /* Borders */
+  --border:       #1e1e1e;
+  --border2:      #2a2a2a;
+  --border3:      #333333;
+
+  /* Text */
+  --fg:           #e8e8e8;
+  --fg-muted:     #808080;
+  --fg-dim:       #484848;
+  --fg-accent:    #f5c518;
+
+  /* Accent */
+  --accent:       #f5c518;
+  --accent-dim:   rgba(245, 197, 24, 0.15);
+  --accent-glow:  rgba(245, 197, 24, 0.08);
+
+  /* Semantic */
+  --green:        #4ec994;
+  --green-dim:    rgba(78, 201, 148, 0.12);
+  --red:          #f14c4c;
+  --red-dim:      rgba(241, 76, 76, 0.12);
+  --blue:         #4d9de0;
+  --blue-dim:     rgba(77, 157, 224, 0.12);
+  --orange:       #e8a24a;
+  --purple:       #b48ead;
+  --cyan:         #5bbccc;
+
+  /* Syntax */
+  --syn-keyword:  #cc7dbc;
+  --syn-string:   #d4a96a;
+  --syn-comment:  #5c6773;
+  --syn-number:   #9d84d4;
+  --syn-function: #61b8d6;
+  --syn-class:    #5cc8ae;
+  --syn-builtin:  #87c3e8;
+  --syn-operator: #cc7dbc;
+  --syn-variable: #e8e8e8;
+  --syn-constant: #9d84d4;
+  --syn-type:     #5cc8ae;
+
+  /* Layout */
+  --titlebar-h:   30px;
+  --tabbar-h:     35px;
+  --statusbar-h:  22px;
+  --activity-w:   48px;
+  --sidebar-w:    240px;
+  --panel-h:      240px;
+
+  /* Typography */
+  --font-ui:      'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-mono:    'Cascadia Code', 'Consolas', 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  --font-size:    13px;
+  --line-height:  1.5;
+
+  --transition:   0.12s ease;
+}
+
+/* ── Dark+ (VS Code default) ── */
+[data-theme="dark-plus"] {
+  --bg:           #1e1e1e;
+  --bg-editor:    #1e1e1e;
+  --bg-sidebar:   #252526;
+  --bg-panel:     #1e1e1e;
+  --bg-titlebar:  #3c3c3c;
+  --bg-tabbar:    #2d2d2d;
+  --bg-tab-act:   #1e1e1e;
+  --bg-tab-in:    #2d2d2d;
+  --bg-activity:  #333333;
+  --bg-statusbar: #1e1e1e;
+  --bg-input:     #3c3c3c;
+  --bg-hover:     #2a2d2e;
+  --bg-dropdown:  #252526;
+  --bg-select:    rgba(38,79,120,0.4);
+
+  --border:       #3c3c3c;
+  --border2:      #454545;
+  --border3:      #555555;
+
+  /* High contrast text for Dark+ */
+  --fg:           #d4d4d4;
+  --fg-muted:     #9d9d9d;
+  --fg-dim:       #6a6a6a;
+  --fg-accent:    #4fc1ff;
+
+  --accent:       #007acc;
+  --accent-dim:   rgba(0,122,204,0.15);
+
+  --green:        #4ec994;
+  --green-dim:    rgba(78,201,148,0.12);
+  --red:          #f14c4c;
+  --red-dim:      rgba(241,76,76,0.12);
+  --blue:         #4d9de0;
+  --blue-dim:     rgba(77,157,224,0.12);
+
+  --syn-keyword:  #569cd6;
+  --syn-string:   #ce9178;
+  --syn-comment:  #6a9955;
+  --syn-number:   #b5cea8;
+  --syn-function: #dcdcaa;
+  --syn-class:    #4ec9b0;
+  --syn-builtin:  #9cdcfe;
+  --syn-operator: #d4d4d4;
+  --syn-type:     #4ec9b0;
+  --syn-constant: #b5cea8;
+}
+
+/* ── Monokai ── */
+[data-theme="monokai"] {
+  --bg:           #1a1a1a;
+  --bg-editor:    #272822;
+  --bg-sidebar:   #1e1e1c;
+  --bg-panel:     #1a1a1a;
+  --bg-titlebar:  #1a1a1a;
+  --bg-tabbar:    #1a1a1a;
+  --bg-tab-act:   #272822;
+  --bg-tab-in:    #1e1e1c;
+  --bg-activity:  #1a1a1a;
+  --bg-statusbar: #1a1a1a;
+  --bg-input:     #3e3d32;
+  --bg-hover:     #3e3d32;
+  --bg-dropdown:  #272822;
+  --bg-select:    rgba(166,226,46,0.15);
+
+  --border:       #3a3a38;
+  --border2:      #49483e;
+  --border3:      #75715e;
+
+  --fg:           #f8f8f2;
+  --fg-muted:     #a59f85;
+  --fg-dim:       #75715e;
+  --fg-accent:    #a6e22e;
+
+  --accent:       #a6e22e;
+  --accent-dim:   rgba(166,226,46,0.15);
+
+  --syn-keyword:  #f92672;
+  --syn-string:   #e6db74;
+  --syn-comment:  #75715e;
+  --syn-number:   #ae81ff;
+  --syn-function: #a6e22e;
+  --syn-class:    #a6e22e;
+  --syn-builtin:  #66d9ef;
+  --syn-operator: #f92672;
+  --syn-type:     #66d9ef;
+  --syn-constant: #ae81ff;
+}

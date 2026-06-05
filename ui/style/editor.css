@@ -1,0 +1,114 @@
+/* ── CodeMirror 6 base ── */
+.cm-editor {
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-editor);
+}
+.cm-editor.cm-focused { outline: none; }
+
+.cm-gutters {
+  background: var(--bg-editor) !important;
+  border-right: 1px solid var(--border) !important;
+  color: var(--fg-dim) !important;
+  min-width: 48px;
+  user-select: none;
+}
+.cm-lineNumbers .cm-gutterElement {
+  padding: 0 10px 0 6px !important;
+  min-width: 36px;
+  text-align: right;
+}
+.cm-activeLineGutter { background: rgba(255,255,255,0.04) !important; color: var(--fg-muted) !important; }
+.cm-content        { padding: 4px 0 200px !important; caret-color: var(--accent) !important; }
+.cm-line           { padding-left: 8px !important; padding-right: 12px !important; color: var(--fg); }
+.cm-activeLine     { background: rgba(255,255,255,0.025) !important; }
+.cm-cursor         { border-left: 2px solid var(--accent) !important; }
+.cm-selectionBackground,
+.cm-focused .cm-selectionBackground { background: var(--bg-select) !important; }
+.cm-matchingBracket { background: rgba(245,197,24,0.15) !important; outline: 1px solid rgba(245,197,24,0.35) !important; }
+.cm-scroller { font-family: var(--font-mono) !important; font-size: 13px !important; line-height: 1.6 !important; }
+.cm-scroller::-webkit-scrollbar { width: 8px; height: 8px; }
+.cm-scroller::-webkit-scrollbar-track { background: transparent; }
+.cm-scroller::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 4px; }
+.cm-tooltip { background: var(--bg-dropdown) !important; border: 1px solid var(--border2) !important; border-radius: 4px !important; }
+.cm-tooltip-autocomplete > ul { font-family: var(--font-mono) !important; font-size: 12px !important; }
+.cm-tooltip-autocomplete > ul > li { padding: 3px 10px !important; }
+.cm-tooltip-autocomplete > ul > li[aria-selected] { background: var(--accent-dim) !important; color: var(--accent) !important; }
+
+/* ── Syntax highlighting ──
+   classHighlighter emits .cmt-<tagname> classes.
+   We also target .tok-* (some lezer versions) and the raw tag names.
+   Belt-and-suspenders approach: try all variants.
+*/
+
+/* Keywords — if/else/def/class/import/return etc */
+.cmt-keyword, .tok-keyword,
+span[class*="keyword"] { color: var(--syn-keyword) !important; font-weight: 500; }
+
+/* Strings */
+.cmt-string, .cmt-string2, .tok-string, .tok-string2,
+span[class*="string"] { color: var(--syn-string) !important; }
+
+/* Comments */
+.cmt-comment, .tok-comment,
+span[class*="comment"] { color: var(--syn-comment) !important; font-style: italic; }
+
+/* Numbers */
+.cmt-number, .cmt-integer, .cmt-float, .tok-number,
+span[class*="number"] { color: var(--syn-number) !important; }
+
+/* Functions / definitions */
+.cmt-function, .cmt-definition, .tok-function, .tok-def,
+span[class*="function"], span[class*="definition"] { color: var(--syn-function) !important; }
+
+/* Variable names */
+.cmt-variableName, .tok-variableName { color: var(--fg); }
+.cmt-variableName.cmt-definition,
+.cmt-definition.cmt-variableName { color: var(--syn-function) !important; }
+
+/* Property / attribute names */
+.cmt-propertyName, .tok-propertyName,
+span[class*="propertyName"] { color: var(--syn-function) !important; }
+
+/* Class names / type names */
+.cmt-className, .cmt-typeName, .cmt-namespace,
+.tok-class, .tok-typeName,
+span[class*="className"], span[class*="typeName"] { color: var(--syn-class) !important; font-weight: 500; }
+
+/* Builtins */
+.cmt-builtin, .tok-builtin,
+span[class*="builtin"] { color: var(--syn-builtin) !important; }
+
+/* Operators */
+.cmt-operator, .tok-operator,
+span[class*="operator"] { color: var(--syn-operator) !important; }
+
+/* Booleans / null / atoms */
+.cmt-bool, .cmt-null, .cmt-atom,
+.tok-bool, .tok-atom { color: var(--syn-constant) !important; }
+
+/* Self / this */
+.cmt-self, .tok-self { color: var(--syn-builtin) !important; font-style: italic; }
+
+/* Decorators */
+.cmt-decorator, .tok-decorator,
+span[class*="decorator"] { color: var(--syn-class) !important; }
+
+/* Punctuation / brackets */
+.cmt-punctuation, .cmt-bracket, .cmt-separator { color: var(--fg-muted); }
+
+/* Misc */
+.cmt-escape { color: var(--syn-number) !important; }
+.cmt-regexp { color: var(--orange) !important; }
+.cmt-invalid, .tok-invalid { color: var(--red) !important; text-decoration: underline wavy var(--red); }
+.cmt-tagName  { color: var(--syn-keyword) !important; }
+.cmt-attributeName  { color: var(--syn-function) !important; }
+.cmt-attributeValue { color: var(--syn-string) !important; }
+.cmt-heading  { color: var(--accent) !important; font-weight: 700; }
+.cmt-strong   { font-weight: 700; }
+.cmt-emphasis { font-style: italic; }
+.cmt-link     { color: var(--blue) !important; text-decoration: underline; }
+.cmt-inserted { color: var(--green) !important; }
+.cmt-deleted  { color: var(--red) !important; }
+.cmt-changed  { color: var(--orange) !important; }

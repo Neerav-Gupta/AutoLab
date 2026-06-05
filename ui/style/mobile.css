@@ -1,0 +1,248 @@
+/* ── Mobile ── activated by data-mobile="1" on <html> ── */
+
+html[data-mobile="1"] {
+  /* Kill desktop layout */
+  overflow: hidden;
+}
+
+html[data-mobile="1"] body {
+  overflow: hidden;
+  height: 100dvh;
+  height: -webkit-fill-available;
+}
+
+/* Hide ALL desktop elements */
+html[data-mobile="1"] #app,
+html[data-mobile="1"] #titlebar,
+html[data-mobile="1"] #workbench,
+html[data-mobile="1"] #statusbar { display: none !important; }
+
+/* ── Shell: fills entire screen ── */
+#m-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  /* Height = screen minus nav bar */
+  height: calc(100dvh - 56px - env(safe-area-inset-bottom, 0px));
+  height: calc(100vh  - 56px);      /* fallback */
+  overflow: hidden;
+  z-index: 10;
+}
+
+/* ── Top bar ── */
+#m-topbar {
+  height: 48px;
+  min-height: 48px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: var(--bg-titlebar);
+  border-bottom: 1px solid var(--border);
+}
+#m-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fg);
+}
+#m-action {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Body: everything between topbar and nav ── */
+#m-body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Scrollable content areas inside body */
+#m-body > div[style*="overflow-y"],
+#m-body > div > div[style*="overflow-y"] {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Nav bar: pinned to bottom ── */
+#m-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  display: flex;
+  background: var(--bg-sidebar);
+  border-top: 1px solid var(--border);
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  z-index: 20;
+}
+#m-nav button {
+  flex: 1;
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--fg-dim);
+  font-size: 10px;
+  font-family: var(--font-ui);
+  cursor: pointer;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  transition: color 0.1s;
+  padding: 0;
+}
+#m-nav button.active { color: var(--accent); }
+#m-nav button:active { opacity: 0.6; }
+#m-nav svg { width: 22px; height: 22px; }
+
+#m-badge {
+  display: none;
+  position: absolute;
+  top: 4px;
+  right: calc(50% - 18px);
+  background: var(--accent);
+  color: #000;
+  font-size: 9px;
+  font-weight: 700;
+  min-width: 14px;
+  height: 14px;
+  border-radius: 7px;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  pointer-events: none;
+  font-style: normal;
+}
+
+/* ── Status cards ── */
+.m-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px;
+}
+.m-card {
+  background: var(--bg-input);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 10px;
+  overflow: hidden;
+}
+.m-card-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  color: var(--fg-dim);
+  margin-bottom: 4px;
+}
+.m-card-value {
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Terminal ── */
+#mc-term {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* Slight padding so cursor line isn't flush with edges */
+  padding: 4px 0 0 6px;
+  /* Explicit height constraint so xterm FitAddon measures correctly */
+  height: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+}
+/* xterm internal elements must fill their container exactly */
+#mc-term .xterm {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+#mc-term .xterm-viewport {
+  overflow-y: auto !important;
+  /* Allow scroll to bottom — viewport must not be taller than screen */
+  max-height: 100% !important;
+}
+#mc-term .xterm-screen {
+  overflow: hidden !important;
+}
+
+
+/* ── Chat wrapper — ensures footer never goes offscreen ── */
+#mc-wrap {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+/* ── Chat ── */
+/* m-body must be flex column so footer stays visible */
+#m-body:has(#mc-msgs) {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#mc-msgs {
+  flex: 1;
+  min-height: 0;          /* critical — allows shrinking below content size */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 10px;
+}
+#mc-foot {
+  flex-shrink: 0;         /* never shrink — always fully visible */
+  padding: 8px 10px 10px;
+  border-top: 1px solid var(--border);
+  background: var(--bg-sidebar);
+  /* Ensure it clears the nav bar — nav is 56px fixed at bottom */
+  margin-bottom: 0;
+}
+#mc-input {
+  width: 100%;
+  min-height: 52px;
+  max-height: 120px;
+  background: var(--bg-input);
+  color: var(--fg);
+  border: 1px solid var(--border2);
+  border-radius: 4px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: var(--font-ui);
+  resize: none;
+  outline: none;
+  line-height: 1.4;
+  box-sizing: border-box;
+}
+#mc-input:focus { border-color: var(--accent); }
+
+/* ── Modal on mobile ── */
+html[data-mobile="1"] .modal-overlay {
+  padding: 0 !important;
+  align-items: flex-end !important;
+  z-index: 100;
+}
+html[data-mobile="1"] .modal {
+  width: 100% !important;
+  max-width: 100% !important;
+  border-radius: 12px 12px 0 0 !important;
+  max-height: 85dvh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0;
+  padding-bottom: max(env(safe-area-inset-bottom, 0px), 16px);
+}

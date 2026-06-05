@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AutoLab</title>
+<link rel="stylesheet" href="/style/theme.css"/>
+<link rel="stylesheet" href="/style/main.css"/>
+<link rel="stylesheet" href="/style/editor.css"/>
+<link rel="stylesheet" href="/style/mobile.css"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css"/>
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
+
+<!-- importmap: pins every @codemirror/* to a single URL so only one
+     @codemirror/state instance is ever loaded, preventing the
+     "multiple instances" crash when opening files. -->
+<script type="importmap">
+{
+  "imports": {
+    "@codemirror/state":        "https://esm.sh/@codemirror/state@6.4.1",
+    "@codemirror/view":         "https://esm.sh/@codemirror/view@6.35.3?external=@codemirror/state",
+    "@codemirror/commands":     "https://esm.sh/@codemirror/commands@6.7.1?external=@codemirror/state,@codemirror/view",
+    "@codemirror/language":     "https://esm.sh/@codemirror/language@6.10.6?external=@codemirror/state,@codemirror/view",
+    "@codemirror/autocomplete": "https://esm.sh/@codemirror/autocomplete@6.18.4?external=@codemirror/state,@codemirror/view,@codemirror/language",
+    "@codemirror/lang-python":  "https://esm.sh/@codemirror/lang-python@6.1.6?external=@codemirror/state,@codemirror/language",
+    "@codemirror/lang-javascript": "https://esm.sh/@codemirror/lang-javascript@6.2.2?external=@codemirror/state,@codemirror/language",
+    "@codemirror/lang-json":    "https://esm.sh/@codemirror/lang-json@6.0.1?external=@codemirror/state,@codemirror/language",
+    "@codemirror/lang-markdown":"https://esm.sh/@codemirror/lang-markdown@6.3.1?external=@codemirror/state,@codemirror/language",
+    "@codemirror/lang-yaml":    "https://esm.sh/@codemirror/lang-yaml@6.1.1?external=@codemirror/state,@codemirror/language",
+    "@codemirror/legacy-modes/mode/shell": "https://esm.sh/@codemirror/legacy-modes@6.4.2/mode/shell?external=@codemirror/language",
+    "@lezer/highlight":         "https://esm.sh/@lezer/highlight@1.2.1"
+  }
+}
+</script>
+</head>
+<body>
+<div id="app" style="display:none">
+
+<!-- ── Titlebar ── -->
+<div id="titlebar">
+  <div class="titlebar-traffic">
+    <div class="titlebar-dot dot-close"></div>
+    <div class="titlebar-dot dot-min"></div>
+    <div class="titlebar-dot dot-max"></div>
+  </div>
+  <div class="titlebar-menu">
+    <div class="titlebar-menu-item" onclick="showNewFileModal('/workspace')">File</div>
+    <div class="titlebar-menu-item">Edit</div>
+    <div class="titlebar-menu-item" onclick="openThemeMenu()">View</div>
+    <div class="titlebar-menu-item" onclick="Editor.runCurrentFile()">Run</div>
+    <div class="titlebar-menu-item" onclick="togglePanel()">Terminal</div>
+  </div>
+  <div class="titlebar-title">AutoLab</div>
+  <div class="titlebar-actions">
+    <div class="titlebar-btn" onclick="openTemplatesModal()" title="Task templates">Templates</div>
+    <div class="titlebar-btn accent" onclick="openNewTaskModal()">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" width="12" height="12"><polygon points="5,1 13,7 5,13" fill="currentColor" stroke="none"/></svg>
+      New Task
+    </div>
+    <div class="titlebar-btn" onclick="toggleChat()">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12"><path d="M1 1h12a1 1 0 011 1v7a1 1 0 01-1 1H4l-3 2V2a1 1 0 011-1z"/></svg>
+      Chat
+    </div>
+  </div>
+</div>
+
+<!-- ── Workbench ── -->
+<div id="workbench">
+
+  <!-- Activity bar -->
+  <div id="activitybar">
+    <div class="activity-btn active" data-view="explorer" onclick="setSidebarView('explorer')" title="Explorer">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><path d="M3 5a1 1 0 011-1h4l2 2h6a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V5z"/></svg>
+    </div>
+    <div class="activity-btn" data-view="search" onclick="setSidebarView('search')" title="Search">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><circle cx="9" cy="9" r="5.5"/><line x1="13.5" y1="13.5" x2="17" y2="17"/></svg>
+    </div>
+    <div class="activity-spacer"></div>
+    <div class="activity-btn" data-view="tasks" onclick="setSidebarView('tasks')" title="Agent Tasks">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><rect x="3" y="2" width="14" height="16" rx="1.5"/><line x1="7" y1="7" x2="13" y2="7"/><line x1="7" y1="10" x2="13" y2="10"/><line x1="7" y1="13" x2="10" y2="13"/></svg>
+      <div class="activity-badge" id="tasks-badge" style="display:none"></div>
+    </div>
+    <div class="activity-btn" data-view="experiments" onclick="setSidebarView('experiments')" title="Experiments">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><rect x="2" y="10" width="3" height="8" rx="1"/><rect x="7" y="6" width="3" height="12" rx="1"/><rect x="12" y="2" width="3" height="16" rx="1"/><rect x="17" y="8" width="1" height="10"/></svg>
+    </div>
+    <div class="activity-btn" data-view="checkpoints" onclick="setSidebarView('checkpoints')" title="Checkpoints">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><path d="M4 3h9l4 4v10a1 1 0 01-1 1H4a1 1 0 01-1-1V4a1 1 0 011-1z"/><rect x="6" y="12" width="8" height="6"/><rect x="6" y="3" width="5" height="4"/></svg>
+    </div>
+    <div class="activity-btn" onclick="openThemeMenu()" title="Settings">
+      <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" width="20" height="20"><circle cx="10" cy="10" r="2.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42"/></svg>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div id="sidebar">
+
+    <!-- Explorer -->
+    <div class="sidebar-panel" data-panel="explorer">
+      <div class="sidebar-section-head">
+        Explorer
+        <div class="sidebar-section-actions">
+          <div class="sidebar-icon-btn" onclick="showNewFileModal('/workspace')" title="New File">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><path d="M9 2H4a1 1 0 00-1 1v10a1 1 0 001 1h8a1 1 0 001-1V6L9 2z"/><polyline points="9,2 9,6 13,6"/><line x1="8" y1="9" x2="8" y2="13"/><line x1="6" y1="11" x2="10" y2="11"/></svg>
+          </div>
+          <div class="sidebar-icon-btn" onclick="showNewFolderModal('/workspace')" title="New Folder">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><path d="M1 4a1 1 0 011-1h4l1.5 1.5H14a1 1 0 011 1V12a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/><line x1="8" y1="7" x2="8" y2="11"/><line x1="6" y1="9" x2="10" y2="9"/></svg>
+          </div>
+          <div class="sidebar-icon-btn" onclick="Editor.loadFileTree()" title="Refresh">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><polyline points="2,10 2,14 6,14"/><polyline points="14,6 14,2 10,2"/><path d="M14,6 A6 6 0 0 0 2,10"/><path d="M2,10 A6 6 0 0 0 14,6"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="file-tree"></div>
+    </div>
+
+    <!-- Search -->
+    <div class="sidebar-panel hidden" data-panel="search">
+      <div class="sidebar-section-head">Search</div>
+      <input class="sidebar-search-input" id="search-input"
+        placeholder="Search files and content…"
+        oninput="searchFiles(this.value)" autocomplete="off" spellcheck="false"/>
+      <div id="search-results" style="flex:1;overflow-y:auto;min-height:0">
+        <div class="search-hint">Type to search…</div>
+      </div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="sidebar-panel hidden" data-panel="tasks">
+      <div class="sidebar-section-head">
+        Agent Tasks
+        <div class="sidebar-section-actions">
+          <div class="sidebar-icon-btn" onclick="openNewTaskModal()" title="New Task">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><circle cx="8" cy="8" r="6"/><line x1="8" y1="5" x2="8" y2="11"/><line x1="5" y1="8" x2="11" y2="8"/></svg>
+          </div>
+          <div class="sidebar-icon-btn" onclick="loadTasks()" title="Refresh">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><polyline points="2,10 2,14 6,14"/><polyline points="14,6 14,2 10,2"/><path d="M14,6 A6 6 0 0 0 2,10"/><path d="M2,10 A6 6 0 0 0 14,6"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="tasks-view" style="flex:1;overflow-y:auto;padding:6px;min-height:0"></div>
+    </div>
+
+
+    <!-- Experiments -->
+    <div class="sidebar-panel hidden" data-panel="experiments">
+      <div class="sidebar-section-head">
+        Experiments
+        <div class="sidebar-section-actions">
+          <div class="sidebar-icon-btn" onclick="loadExperiments()" title="Refresh">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><polyline points="2,10 2,14 6,14"/><polyline points="14,6 14,2 10,2"/><path d="M14,6 A6 6 0 0 0 2,10"/><path d="M2,10 A6 6 0 0 0 14,6"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="experiments-view" style="flex:1;overflow:hidden;min-height:0;display:flex;flex-direction:column"></div>
+    </div>
+
+    <!-- Checkpoints -->
+    <div class="sidebar-panel hidden" data-panel="checkpoints">
+      <div class="sidebar-section-head">
+        Checkpoints
+        <div class="sidebar-section-actions">
+          <div class="sidebar-icon-btn" onclick="loadCheckpoints()" title="Refresh">
+            <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><polyline points="2,10 2,14 6,14"/><polyline points="14,6 14,2 10,2"/><path d="M14,6 A6 6 0 0 0 2,10"/><path d="M2,10 A6 6 0 0 0 14,6"/></svg>
+          </div>
+        </div>
+      </div>
+      <div id="checkpoints-view" style="flex:1;overflow-y:auto;min-height:0"></div>
+    </div>
+
+  </div>
+
+  <!-- Sidebar resize -->
+  <div class="resize-v" id="sidebar-resize"></div>
+
+  <!-- Editor + Panel -->
+  <div id="editor-area">
+
+    <div id="tabbar"></div>
+    <div id="breadcrumb"></div>
+
+    <div id="editor-wrapper">
+      <div id="editor-placeholder">
+        <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1" width="52" height="52" style="opacity:0.06"><rect x="4" y="4" width="40" height="40" rx="4"/><line x1="12" y1="16" x2="36" y2="16"/><line x1="12" y1="24" x2="28" y2="24"/><line x1="12" y1="32" x2="32" y2="32"/></svg>
+        <div class="welcome-name">AUTOLAB</div>
+        <div class="welcome-sub">Autonomous ML Research IDE</div>
+        <div class="welcome-keys">
+          <div class="welcome-key"><span class="kbd">Ctrl+S</span> Save</div>
+          <div class="welcome-key"><span class="kbd">F5</span> Run file</div>
+          <div class="welcome-key"><span class="kbd">Ctrl+`</span> Terminal</div>
+          <div class="welcome-key"><span class="kbd">Ctrl+Shift+P</span> New task</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel resize -->
+    <div class="resize-h" id="panel-resize"></div>
+
+    <!-- Terminal / Output panel -->
+    <div id="panel">
+      <div id="panel-tabs">
+        <div class="panel-tab active" data-panel="terminal" onclick="switchPanelTab('terminal')">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="11" height="11"><polyline points="2,4 6,7 2,10"/><line x1="8" y1="10" x2="12" y2="10"/></svg>
+          TERMINAL
+        </div>
+        <div class="panel-tab" data-panel="output" onclick="switchPanelTab('output')">OUTPUT</div>
+        <div class="panel-tab" data-panel="problems" onclick="switchPanelTab('problems')">PROBLEMS</div>
+        <div class="panel-tab-actions">
+          <div class="panel-btn accent" onclick="TermManager.create()" title="New Terminal">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><line x1="7" y1="2" x2="7" y2="12"/><line x1="2" y1="7" x2="12" y2="7"/></svg>
+          </div>
+          <div class="panel-btn" onclick="TermManager.clear()" title="Clear">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="13" height="13"><circle cx="7" cy="7" r="5"/><line x1="4" y1="4" x2="10" y2="10"/></svg>
+          </div>
+          <div class="panel-btn" onclick="TermManager.reconnect()" title="Reconnect">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="13" height="13"><polyline points="2,8 2,12 6,12"/><path d="M2,12 A6 6 0 1 1 12,5"/></svg>
+          </div>
+          <div class="panel-btn" onclick="togglePanel()" title="Close Panel">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" width="13" height="13"><line x1="3" y1="3" x2="11" y2="11"/><line x1="11" y1="3" x2="3" y2="11"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <div id="terminals-wrapper" style="display:flex;flex:1;overflow:hidden;flex-direction:column;"></div>
+      <div id="output-wrapper" style="display:none;flex:1;flex-direction:column;overflow:hidden"><div id="output-body"></div></div>
+      <div id="problems-wrapper" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div id="problems-body" style="padding:10px 14px;font-size:12px;color:var(--fg-dim)">No problems detected.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Chat resize -->
+  <div class="resize-v" id="chat-resize"></div>
+
+  <!-- AI Chat -->
+  <div id="chat-sidebar">
+    <div id="chat-header">
+      <span class="chat-header-title">
+        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="12" height="12" style="margin-right:4px"><path d="M1 1h12a1 1 0 011 1v7a1 1 0 01-1 1H4l-3 2V2a1 1 0 011-1z"/></svg>
+        AI Assistant
+      </span>
+      <span class="chat-header-model" id="chat-model-label">loading…</span>
+      <div style="display:flex;gap:2px">
+        <span class="chat-header-btn" onclick="Chat.addFileContext()" title="Add current file">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><path d="M12 6.5l-5.5 5.5A3 3 0 012.5 7.5L8 2a1.5 1.5 0 012 2L5 8.5a1 1 0 01-1-1L8 4"/></svg>
+        </span>
+        <span class="chat-header-btn" onclick="Chat.createTaskFromChat()" title="Create agent task from chat">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><polygon points="4,1 12,7 4,13" fill="currentColor" stroke="none"/></svg>
+        </span>
+        <span class="chat-header-btn" onclick="Chat.clear()" title="Clear">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.4" width="14" height="14"><circle cx="7" cy="7" r="5"/><line x1="4" y1="4" x2="10" y2="10"/></svg>
+        </span>
+      </div>
+    </div>
+    <div id="chat-messages"></div>
+    <div id="chat-input-area">
+      <textarea id="chat-input"
+        placeholder="Ask anything… Shift+Enter for newline
+
+Tips: 'this file', 'workspace files', 'gpu status', 'read /path/to/file'"
+        onkeydown="handleChatKey(event)" spellcheck="false" autocomplete="off"></textarea>
+      <div id="chat-input-footer">
+        <button class="chat-extra-btn" onclick="Chat.runLast()" title="Run last code block">
+          <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10"><polygon points="2,1 11,6 2,11"/></svg>
+          Run last
+        </button>
+        <button class="chat-send" id="chat-send-btn" onclick="sendChat()">Send</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- workbench -->
+
+<!-- Status bar -->
+<div id="statusbar">
+  <div class="statusbar-item">
+    <span class="status-dot connecting" id="status-dot"></span>
+    <span id="status-host">connecting…</span>
+  </div>
+  <div class="statusbar-sep"></div>
+  <div class="statusbar-item" id="gpu-status-item" style="display:none" onclick="GpuMonitor.showPanel()" title="GPU Monitor"></div>
+  <div class="statusbar-sep" id="gpu-sep" style="display:none"></div>
+  <div class="statusbar-item" id="status-run"></div>
+  <div class="statusbar-item right accent" id="status-lang"></div>
+  <div class="statusbar-sep"></div>
+  <div class="statusbar-item" id="status-conn">
+    <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" width="10" height="10"><rect x="1" y="4" width="10" height="7" rx="1"/><path d="M4 4V3a2 2 0 014 0v1"/></svg>
+    <span>SSH</span>
+  </div>
+  <div class="statusbar-sep"></div>
+  <div class="statusbar-item" id="status-model"></div>
+  <div class="statusbar-sep"></div>
+  <div class="statusbar-item accent" onclick="openNewTaskModal()" style="cursor:pointer">
+    <svg viewBox="0 0 12 12" fill="currentColor" width="10" height="10"><polygon points="2,1 11,6 2,11"/></svg>
+    New Task
+  </div>
+</div>
+
+</div><!-- app -->
+
+<!-- New Task Modal -->
+<div class="modal-overlay" id="new-task-modal" style="display:none" onclick="if(event.target===this)closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h2>New autonomous task</h2>
+    <label class="modal-label">Task description</label>
+    <textarea class="modal-textarea" id="nti-task" rows="4"
+      placeholder="Train ResNet-18 on CIFAR-10 with mixed precision. Target 90% val accuracy. Save checkpoint to /workspace/checkpoints/."></textarea>
+    <label class="modal-label">Max iterations <span style="color:var(--fg-dim)">(default: 25)</span></label>
+    <input class="modal-input" type="number" id="nti-max" placeholder="25" min="1" max="100"/>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+      <button class="btn btn-primary" id="nti-submit" onclick="submitNewTask()">Launch</button>
+    </div>
+  </div>
+</div>
+
+<!-- Context menu + toasts -->
+<div id="ctx-menu"></div>
+<div id="toast-container"></div>
+
+<!-- Scripts -->
+<script src="/js/state.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/utils.js"></script>
+<script src="/js/notifications.js"></script>
+<script src="/js/search.js"></script>
+<script src="/js/terminal.js"></script>
+<script src="/js/chat.js"></script>
+<script src="/js/tasks.js"></script>
+<script src="/js/editor.js"></script>
+<script src="/js/experiments.js"></script>
+<script src="/js/diff.js"></script>
+<script src="/js/gpu_monitor.js"></script>
+<script src="/js/checkpoints.js"></script>
+<script src="/js/templates.js"></script>
+<script src="/js/mobile.js"></script>
+<script src="/js/app.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const d = await API.status();
+    const el = document.getElementById('chat-model-label');
+    if (el) el.textContent = d.model.split('/').pop();
+  } catch {}
+});
+</script>
+</body>
+</html>

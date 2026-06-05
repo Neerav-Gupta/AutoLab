@@ -1,0 +1,48 @@
+# Environment — contains your API keys and SSH details
+.env
+
+# Task logs — contain your experiment outputs (can be large)
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.whl
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.mypy_cache/
+.tox/
+htmlcov/
+.coverage
+coverage.xml
+
+# Secrets / keys
+*.pem
+*.key
+id_rsa
+id_ed25519
+id_ecdsa
