@@ -1,4 +1,4 @@
-<h1><img src="ui/favicon.svg" width="42" height="42" valign="middle" alt=""/> AutoLab</h1>
+<h1><img src="ui/favicon.svg" width="42" height="42" valign="middle" alt="" style="margin-right: 10px;" /> AutoLab</h1>
 
 **An autonomous ML research IDE that runs in your browser, connects to your GPU pod over SSH, and lets an AI agent write code, run experiments, debug errors, and iterate — while you sleep.**
 
