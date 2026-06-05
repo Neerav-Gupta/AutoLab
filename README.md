@@ -1,4 +1,4 @@
-<img src="docs/logo.svg" width="38" height="38" align="left" style="margin-right:12px" alt="AutoLab logo"/>
+<img src="ui/favicon.svg" width="38" height="38" align="left" style="margin-right:12px" alt="AutoLab logo"/>
 
 # AutoLab
 
