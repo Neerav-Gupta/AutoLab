@@ -1,4 +1,4 @@
-<table border="0" cellpadding="0" cellspacing="0"><tr><td><img src="ui/favicon.svg" width="48" height="48" alt="AutoLab logo"/></td><td>&nbsp;&nbsp;</td><td><h1>AutoLab</h1></td></tr></table>
+<h1><img src="ui/favicon.svg" width="42" height="42" valign="middle" alt=""/> AutoLab</h1>
 
 **An autonomous ML research IDE that runs in your browser, connects to your GPU pod over SSH, and lets an AI agent write code, run experiments, debug errors, and iterate — while you sleep.**
 
