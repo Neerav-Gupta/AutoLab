@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400" role="img">
+  <title>AutoLab</title>
+  <desc>AutoLab logo — hexagonal terminal mark</desc>
+
+  <!-- Outer glow rings -->
+  <polygon fill="none" stroke="#f5c518" stroke-width="1" opacity="0.08"
+    points="200,44 340,122 340,278 200,356 60,278 60,122"/>
+  <polygon fill="none" stroke="#f5c518" stroke-width="1" opacity="0.15"
+    points="200,58 326,131 326,269 200,342 74,269 74,131"/>
+
+  <!-- Main hex -->
+  <polygon fill="#0d0d0d"
+    points="200,72 318,138 318,262 200,328 82,262 82,138"/>
+
+  <!-- Hex border double stroke -->
+  <polygon fill="none" stroke="#f5c518" stroke-width="5" opacity="0.15"
+    points="200,72 318,138 318,262 200,328 82,262 82,138"/>
+  <polygon fill="none" stroke="#f5c518" stroke-width="2"
+    points="200,72 318,138 318,262 200,328 82,262 82,138"/>
+
+  <!-- Inner hex faint -->
+  <polygon fill="none" stroke="#f5c518" stroke-width="0.75" opacity="0.12"
+    points="200,102 290,152 290,248 200,298 110,248 110,152"/>
+
+  <!-- Vertex dots -->
+  <circle fill="#f5c518" opacity="0.6" cx="200" cy="72"  r="3.5"/>
+  <circle fill="#f5c518" opacity="0.6" cx="318" cy="138" r="3.5"/>
+  <circle fill="#f5c518" opacity="0.6" cx="318" cy="262" r="3.5"/>
+  <circle fill="#f5c518" opacity="0.6" cx="200" cy="328" r="3.5"/>
+  <circle fill="#f5c518" opacity="0.6" cx="82"  cy="262" r="3.5"/>
+  <circle fill="#f5c518" opacity="0.6" cx="82"  cy="138" r="3.5"/>
+
+  <!-- Edge tick marks -->
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="259" y1="105" x2="252" y2="117"/>
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="141" y1="105" x2="148" y2="117"/>
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="259" y1="295" x2="252" y2="283"/>
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="141" y1="295" x2="148" y2="283"/>
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="82"  y1="200" x2="96"  y2="200"/>
+  <line stroke="#f5c518" stroke-width="1" opacity="0.25" x1="318" y1="200" x2="304" y2="200"/>
+
+  <!-- >_ terminal prompt -->
+  <path fill="none" stroke="#f5c518" stroke-width="13"
+    stroke-linecap="round" stroke-linejoin="round"
+    d="M136,179 L165,200 L136,221"/>
+  <rect fill="#f5c518" x="178" y="213" width="86" height="10" rx="3"/>
+</svg>
